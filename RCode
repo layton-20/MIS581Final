@@ -1,0 +1,47 @@
+# Reads the excel file downloaded, including all states and all variables
+TeacherCompensationData <- read.csv(file="C:/Users/Olivia/Desktop/CSU/MIS581/TeacherCompensationDraft.csv", header=TRUE, stringsAsFactors=TRUE)
+# Creates a data frame, TeacherCompensationData
+
+# Sets -1 and -2 to NA in TeacherCompensationData set
+TeacherCompensationData[TeacherCompensationData==-1] <- NA
+TeacherCompensationData[TeacherCompensationData==-2] <- NA
+
+
+# Renaming the States
+TeacherCompensationData$StateCode <- gsub("4", "Arizona", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("8", "Colorado", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("12", "Florida", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("16", "Idaho", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("19", "Iowa", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("20", "Kansas", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("21", "Kentucky", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("22", "Louisiana", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("23", "Maine", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("27", "Minnesota", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("28", "Mississippi", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("29", "Missouri", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("31", "Nebraska", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("40", "Oklahoma", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("45", "South Carolina", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("48", "Texas", TeacherCompensationData$StateCode)
+
+# Fixing the errors from above
+TeacherCompensationData$StateCode <- gsub("2Colorado", "Mississippi", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("Arizona0", "Oklahoma", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("Arizona5", "South Carolina", TeacherCompensationData$StateCode)
+TeacherCompensationData$StateCode <- gsub("ArizonaColorado", "Texas", TeacherCompensationData$StateCode)
+
+# Takes the average of compensation data variables by state
+AdvDegreebyState <- aggregate(TeacherCompensationData[4], list(TeacherCompensationData$StateCode), mean, na.rm=TRUE)
+MeanExpbyState <- aggregate(TeacherCompensationData[7], list(TeacherCompensationData$StateCode), mean, na.rm=TRUE)
+MeanBaseSalbyState <- aggregate(TeacherCompensationData[10], list(TeacherCompensationData$StateCode), mean, na.rm=TRUE)
+
+# Reads the excel file 
+DropoutData <- read.csv(file="C:/Users/Olivia/Desktop/CSU/MIS581/DropoutStates17.csv", header=TRUE, stringsAsFactors=TRUE)
+DropoutbyState <- DropoutData[c("Dropout")]
+
+# Binds the two data frames together
+
+CompensationvsDropoutDraft <- cbind(AdvDegreebyState, MeanExpbyState, MeanBaseSalbyState, DropoutbyState)
+
+CompvsDropout <- CompensationvsDropoutDraft[-c(3,5)]
