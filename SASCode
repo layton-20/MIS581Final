@@ -1,0 +1,84 @@
+Proc import datafile= '/folders/myfolders/sasuser.v94/CompvsDropout.csv'
+	out=MYDATA.CompvsDropout
+	dbms=csv
+	replace;
+	run;
+
+PROC MEANS DATA = MYDATA.CompvsDropout;
+RUN;
+
+PROC Univariate Data=Mydata.compvsdropout Normal; 
+RUN;
+
+proc anova data= mydata.compvsdropout ;
+   class Dropout;
+   model PCT_ADVC M_BSAL MEAN_EXP= Dropout;
+run; 
+
+DATA LogDropout0607;
+SET mydata.compvsdropout;
+LOGDropout =log10(Dropout);
+RUN;
+
+PROC REG DATA=Work.logdropout0607;
+MODEL LOGDropout = M_BSAL;
+RUN;
+
+PROC CORR DATA=MYDATA.CompvsDropout;
+VAR Dropout PCT_ADVC M_BSAL MEAN_EXP;
+RUN;
+
+PROC REG DATA=MYDATA.CompvsDropout;
+MODEL Dropout = PCT_ADVC;
+RUN;
+
+PROC REG DATA=MYDATA.CompvsDropout;
+MODEL Dropout = M_BSAL;
+RUN;
+
+PROC REG DATA=MYDATA.CompvsDropout;
+MODEL Dropout = MEAN_EXP;
+RUN;
+
+proc sgplot data=MYDATA.Compvsdropout;
+   reg y=M_BSAL x=Dropout;
+run;
+
+PROC SGSCATTER DATA=Mydata.compvsdropout; 
+     MATRIX Dropout PCT_ADVC M_BSAL MEAN_EXP;
+RUN; 
+
+Proc import datafile= '/folders/myfolders/sasuser.v94/DropoutDraft1617.csv'
+	out=MYDATA.DropoutDraft1617
+	dbms=csv
+	replace;
+	run;
+
+PROC CORR DATA=MYDATA.DropoutDraft1617;
+VAR Completion Salary;
+RUN;
+
+PROC REG DATA=MYDATA.DropoutDraft1617;
+MODEL Completion = Salary;
+RUN;
+
+proc sgplot data=MYDATA.DropoutDraft1617;
+   reg y=Salary x=Completion;
+run;
+
+PROC Univariate Data=Mydata.dropoutdraft1617 Normal; 
+RUN;
+
+proc anova data= mydata.dropoutdraft1617 ;
+   class Completion;
+   model Salary = Completion;
+run; 
+
+DATA LogDropout1617;
+SET mydata.DropoutDraft1617;
+LOGCompletion =log10(Completion);
+RUN;
+
+PROC REG DATA=Work.logdropout1617;
+MODEL LOGCompletion = Salary;
+RUN;
